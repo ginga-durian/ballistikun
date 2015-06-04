@@ -3,7 +3,17 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>バリスティック学ぶ君</title>
-
+  <script type="text/javascript" src="./easeljs-0.8.1.min.js" ></script>
+  <script type="text/javascript" src="./preloadjs-0.6.1.min.js" ></script>
+  <script type="text/javascript" src="./tweenjs-0.6.1.min.js" ></script>
+  <script type="text/javascript" src="./jquery-2.1.4.min.js" ></script>
+  <script type="text/javascript">
+  $(function(){
+    $('button#start').click(function(){
+      $('button#start').attr("disabled", true);
+    });
+  });
+  </script>
 </head>
 <body>
 <div>
@@ -22,10 +32,6 @@
   *スタートは一度だけ
 </div>
 <canvas id="canvas" width="700" height="400"></canvas>
-<script type="text/javascript" src="./easeljs-0.8.1.min.js" ></script>
-<script type="text/javascript" src="./preloadjs-0.6.1.min.js" ></script>
-<script type="text/javascript" src="./tweenjs-0.6.1.min.js" ></script>
-<script type="text/javascript" src="./jquery-2.1.4.min.js" ></script>
 <script type="text/javascript" src="./ballistic.js" ></script>
 </body>
 </html>
