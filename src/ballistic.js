@@ -22,12 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-(function() {
+import * as Ease from 'EaselJS';
+import * as Tween from 'TweenJS';
+import * as jquery from 'jquery';
 
+(function() {
   // 良く利用するcreatejsのオブジェクトはAliasを作る。
-  var Bitmap = createjs.Bitmap,
-    Tween = createjs.Tween,
-    Ease = createjs.Ease;
+  var Bitmap = Ease.Bitmap;
 
   // 描画対象となるステージ
   var stage = null;
@@ -109,7 +110,7 @@ SOFTWARE.
   // onloadイベントの登録
   window.onload = function() {
     //canvasObject=document.getElementById('canvas');
-    stage = new createjs.Stage("canvas");
+    stage = new Ease.Stage("canvas");
 
     // preloadjsを使って画像を読み込む。
     var loadManifest = [{
@@ -143,7 +144,7 @@ SOFTWARE.
       id: "b4",
       src: "./img/s1.png"
     }];
-    var loader = new createjs.LoadQueue(false);
+    var loader = new Ease.LoadQueue(false);
     loader.addEventListener("fileload", loadFile);
     loader.addEventListener("complete", startAnimation);
     loader.loadManifest(loadManifest, true);
@@ -444,19 +445,19 @@ SOFTWARE.
     console.log("startAnimation is called. assets = ", assets["c1out"]);
 
     // Canvasでのアニメーションを動かし始める。
-    createjs.Ticker.setFPS(10);
-    createjs.Ticker.addEventListener("tick", function() {
+    Ease.Ticker.setFPS(10);
+    Ease.Ticker.addEventListener("tick", function() {
       stage.update();
     });
 
     // カバー
-    var cover1 = new createjs.Shape();
+    var cover1 = new Ease.Shape();
     cover1.name = "cover1";
     cover1.graphics.beginFill("yellow").drawCircle(150, 150, 150);
     cover1.addEventListener("click", updateMe);
     stage.addChild(cover1);
 
-    var cover2 = new createjs.Shape();
+    var cover2 = new Ease.Shape();
     cover2.name = "cover2";
     cover2.graphics.beginFill("yellow").drawCircle(500, 150, 150);
     cover2.addEventListener("click", updateMe);

@@ -1,0 +1,23 @@
+{
+  "name": "ballistikun",
+  "homepage": "https://github.com/synnomy/ballistikun",
+  "authors": [
+    "synnomy <synnomy@gmail.com>"
+  ],
+  "description": "",
+  "main": "dist/bundle.js",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "EaselJS": "^0.8.2",
+    "PreloadJS": "^0.6.2",
+    "TweenJS": "^0.6.2"
+  }
+}
