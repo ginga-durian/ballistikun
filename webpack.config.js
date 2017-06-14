@@ -22,19 +22,32 @@ module.exports = {
                 query: {
                     presets: ['es2015', 'react']
                 }
-                // test: /bower_components(\/|\\)(PreloadJS|SoundJS|EaselJS|TweenJS)(\/|\\).*\.js$/,
-                // loader: 'imports-loader?this=>window!exports-loader?window.createjs'
-            }
+            },
+            {
+                test: /bower_components(\/|\\)(PreloadJS|SoundJS|EaselJS|TweenJS)(\/|\\).*\.js$/,
+                loader: 'imports-loader?this=>window!exports-loader?window.createjs'
+            },
+            {
+                test: /.png?$/,
+                loader: 'file-loader',
+                options: {
+                    name: './images/[hash].[ext]',
+                },
+            },
         ]
     },
 
     resolve: {
-        modules: ["node_modules", "bower_components"],
+        modules: [
+            path.resolve(__dirname),
+            "node_modules",
+            "bower_components",
+        ],
         descriptionFiles: ["package.json", "bower.json"],
     },
 
     devServer: {
-        contentBase: path.join(__dirname, "dist"),
+        contentBase: __dirname,
         compress: false,
         port: 8080,
     }

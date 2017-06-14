@@ -5,7 +5,7 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import {Toolbar, ToolbarGroup} from 'material-ui/Toolbar';
 
-import config from '../../config.js';
+import config from 'config.js';
 
 export default class Header extends Component {
     constructor(props, context) {

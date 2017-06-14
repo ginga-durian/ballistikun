@@ -4,8 +4,8 @@ import { render } from 'react-dom';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
-import Header from './components/header.jsx';
-import Controls from './components/controls.jsx';
+import Header from 'src/components/header.jsx';
+import Canvas from 'src/components/canvas.jsx';
 
 const muiTheme = getMuiTheme();
 
@@ -34,6 +34,7 @@ class Main extends Component {
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
                     <Header />
+                    <Canvas />
                 </div>
             </MuiThemeProvider>
         );
