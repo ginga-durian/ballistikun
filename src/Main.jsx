@@ -34,7 +34,7 @@ class Main extends Component {
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
                     <Header />
-                    <Canvas />
+                    <Canvas width={600} height={500} />
                 </div>
             </MuiThemeProvider>
         );

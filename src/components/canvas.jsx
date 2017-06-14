@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
-import {Bitmap, Stage, Shape} from 'EaselJS';
+import {Bitmap, Ease, Stage, Ticker} from 'EaselJS';
 import {Tween} from 'TweenJS';
 import {LoadQueue} from 'PreloadJS';
 
@@ -10,21 +10,39 @@ export default class Canvas extends Component {
     constructor(props, context) {
         super(props, context);
         
-        // const bitmap = new Bitmap(require('img/a_big.png'));
-        // this.queue = new LoadQueue(false);
-        // this.queue.addEventListener("progress", (event) => console.log("ev", event));
-        // this.queue.addEventListener("complete", () => console.log("complete"));
-        // this.queue.loadManifest(config.loadManifest);
+        this.onLoadQueueComplete = () => {
+            for (const c of config.circles) {
+                let image = this.queue.getResult(c.imageId);
+                let bitmap = new Bitmap(image);
+                bitmap.x = c.x;
+                bitmap.y = c.y;
+                bitmap.regX = c.regX;
+                bitmap.regY = c.regY;
+                this.stage.addChild(bitmap);
+                Tween.get(bitmap, {
+                    loop: true
+                })
+                .to({
+                    rotation: 360
+                },
+                config.durationExplode,
+                Ease.linear
+                );
+            }
+            this.stage.update();
+        };
+
+        this.queue = new LoadQueue(true);
+        this.queue.addEventListener("complete", this.onLoadQueueComplete);
+        this.queue.loadManifest(config.manifest, true);
     }
 
     componentDidMount() {
         const canvas = ReactDOM.findDOMNode(this.refs.canvas);
         this.stage = new Stage(canvas);
-        let circle = new Shape();
-        circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 50);
-        circle.x = 100;
-        circle.y = 100;
-        this.stage.addChild(circle);
+        Ticker.addEventListener('tick', this.stage);
+        Ticker.setFPS(config.tickFPS);
+
         this.stage.update();
     }
     

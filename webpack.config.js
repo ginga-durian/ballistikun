@@ -47,7 +47,7 @@ module.exports = {
     },
 
     devServer: {
-        contentBase: __dirname,
+        contentBase: path.resolve(__dirname, 'dist'),
         compress: false,
         port: 8080,
     }
