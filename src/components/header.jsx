@@ -11,7 +11,7 @@ export default class Header extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = { selectedMarker: 0,
-                       stop: false };
+                       stop: this.props.isStop };
         this.handleChange = this.handleChange.bind(this);
         
         const markers = config.markers;
@@ -39,13 +39,13 @@ export default class Header extends Component {
                 <ToolbarGroup>
                     <RaisedButton
                         label="START"
-                        onTouchTap={() => this.setState({stop: false})}
-                        disabled={!this.state.stop}
+                        onTouchTap={this.props.onTapStart}
+                        disabled={!this.props.isStop}
                         />
                     <RaisedButton
                         label="STOP"
-                        onTouchTap={() => this.setState({stop: true})}
-                        disabled={this.state.stop}
+                        onTouchTap={this.props.onTapStop}
+                        disabled={this.props.isStop}
                         />
                 </ToolbarGroup>
             </Toolbar>
