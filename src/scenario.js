@@ -1,4 +1,4 @@
-import {sample, without} from 'underscore';
+import {first, sample, without} from 'underscore';
 
 export default class ScenarioGenerator {
     constructor(config) {
@@ -20,7 +20,7 @@ export default class ScenarioGenerator {
     }
 
     setPlayer(player) {
-        this.player = player;
+        this.playerId = player;
     }
 
     _getRandomPosition(ox, oy, r) {
@@ -45,20 +45,42 @@ export default class ScenarioGenerator {
                 y: y,
             });
         });
-        
-        positions.push({
-            id: first,
-            x: this.firstTarget.x,
-            y: this.firstTarget.y,
-        }, {
-            id: second,
-            x: this.secondTarget.x,
-            y: this.secondTarget.y,
-        });
+
+        const [isFirstCircleLarge, isSecondCircleLarge] =
+            sample([
+                [true, true],
+                [true, false],
+                [false, true],
+                [false, false]]);
 
         return ({
-            target: [first, second],
-            positions: positions,
+            player: this.playerId,
+            firstTarget: first,
+            secondTarget: second,
+            candidates: candidates,
+            positions: [{
+                id: first,
+                x: this.firstTarget.x,
+                y: this.firstTarget.y,
+            }, {
+                id: second,
+                x: this.secondTarget.x,
+                y: this.secondTarget.y,
+            }],
+            circles: [
+                {
+                    isLarge: isFirstCircleLarge,
+                },
+                {
+                    isLarge: isSecondCircleLarge,
+                }
+            ],
+            firstCircle: {
+                isLarge: isFirstCircleLarge,
+            },
+            secondCircle: {
+                isLarge: isSecondCircleLarge,
+            }
         });
     }
 }

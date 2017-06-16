@@ -2,6 +2,8 @@ const config = {
     tickFPS: 10,
     durationExplode: 4000,
     radius: 150,
+    scaleLargeCircle: 1.0,
+    scaleSmallCircle: 0.6,
 
     markers: [
         "Attack1", "Attack2", "Attack3", "Attack4",
@@ -9,6 +11,7 @@ const config = {
     ],
 
     circles: [{
+            id: "c1",
             x: 150,
             y: 150,
             regX: 150,
@@ -24,8 +27,9 @@ const config = {
                 rotation: -360,
             }
         }, {
+            id: "c2",
             x: 150,
-            y: 350,
+            y: 450,
             regX: 150,
             regY: 150,
             outer: {
@@ -86,41 +90,49 @@ const config = {
             id: "a1",
             imageId: "a1",
             group: 1,
+            priority: 1,
         },
         {
             id: "a2",
             imageId: "a2",
             group: 1,
+            priority: 2,
         },
         {
             id: "a3",
             imageId: "a3",
             group: 1,
+            priority: 3,
         },
         {
             id: "a4",
             imageId: "a4",
             group: 1,
+            priority: 4,
         },
         {
             id: "b1",
             imageId: "b1",
             group: 2,
+            priority: 5,
         },
         {
             id: "b2",
             imageId: "b2",
             group: 2,
+            priority: 6,
         },
         {
             id: "b3",
             imageId: "b3",
             group: 2,
+            priority: 7,
         },
         {
             id: "b4",
             imageId: "s1",
             group: 2,
+            priority: 8,
         }
     ],
 };

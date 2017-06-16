@@ -12,7 +12,7 @@ export default class Header extends Component {
         super(props, context);
         this.state = { selectedMarker: 0,
                        stop: this.props.isStop };
-        this.handleChange = this.handleChange.bind(this);
+        this.handleMarkerChange = this.handleMarkerChange.bind(this);
         
         const markers = config.markers;
         this.marker_menuitems = markers.map((element, index) =>
@@ -20,8 +20,9 @@ export default class Header extends Component {
         );
     }
 
-    handleChange(event, index, value) {
+    handleMarkerChange(event, index, value) {
         this.setState({selectedMarker: value});
+        this.props.onMarkerChange(config.members[value]);
     }
 
     render() {
@@ -31,7 +32,7 @@ export default class Header extends Component {
                     <SelectField
                         floatingLabelText="マーカー"
                         value={this.state.selectedMarker}
-                        onChange={this.handleChange}
+                        onChange={this.handleMarkerChange}
                         >
                         {this.marker_menuitems}
                     </SelectField>
