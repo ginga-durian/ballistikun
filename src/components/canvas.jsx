@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {Bitmap, Ease, Shape, Stage, Ticker} from 'EaselJS';
 import {Tween} from 'TweenJS';
 import {LoadQueue} from 'PreloadJS';
-import {sample, zip} from 'underscore';
+import {keys, pick, sample, zip} from 'underscore';
 
 import config from 'config.js';
 
@@ -13,14 +13,19 @@ export default class Canvas extends Component {
         this.state = {
             playerX: 0,
             playerY: 0,
+            selectedCircle: null,
             stage: new Stage(),
         };
-         
+
         this.onLoadQueueComplete = () => {
            for (const p of config.circles) {
                const area = new Shape();
                area.name = p.id;
                area.graphics.beginFill("yellow").drawCircle(p.x, p.y, config.radius);
+               area.x = p.x;
+               area.y = p.y;
+               area.regX = p.x;
+               area.regY = p.y;
                area.addEventListener("click", (event) => this._updatePlayer(event));
                this.state.stage.addChild(area);
 
@@ -59,11 +64,15 @@ export default class Canvas extends Component {
         this.queue = new LoadQueue(true);
         this.queue.addEventListener("complete", this.onLoadQueueComplete);
         this.queue.loadManifest(config.manifest, true);
+
+        this._allocateMembers = this._allocateMembers.bind(this);
     }
 
     componentWillMount() {
-        this.scenario = this.props.scenario;
-        this.answer = this.props.answer;
+        this.setState({
+            scenario: this.props.scenario,
+            answer: this.props.answer,
+        });
     }
 
     componentDidMount() {
@@ -80,21 +89,33 @@ export default class Canvas extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.scenario = this.props.scenario;
-        this.answer = this.props.answer;
-        if ((nextProps.isStop == false) &&
-            (this.props.isStop == true)) {
-                this.play();
-            }
+        this.setState({
+            scenario: this.props.scenario,
+            answer: this.props.answer,
+        });
+        if ((nextProps.play == true) && (this.props.play == false)) {
+            this.setState({
+                playerX: 0,
+                playerY: 0,
+                selectedCircle: null,
+            });
+            this.play();
+        }
     }
 
     _initCircles() {
         const circleZip = zip(
             config.circles,
-            this.scenario.circles
+            this.state.scenario.circles
         );
 
         for (const [p, s] of circleZip) {
+            const area = this.state.stage.getChildByName(p.id);
+            const scale = s.isLarge ?
+                config.scaleLargeCircle : config.scaleSmallCircle;
+            area.scaleX = scale;
+            area.scaleY = scale;
+
             for (const c of [p.outer, p.inner]) {
                 const bitmap = this.state.stage.getChildByName(c.id);
                 const scale = s.isLarge ?
@@ -110,7 +131,71 @@ export default class Canvas extends Component {
         for (const [i, v] of config.members.entries()) {
             const bitmap = this.state.stage.getChildByName(v.id);
             bitmap.x = 400;
-            bitmap.y = i * 40;
+            bitmap.y = i * 42 + 30;
+        }
+    }
+
+    _allocateMembers() {
+        const randomPosition = (ox, oy, r) => {
+            const c = Math.pow(r, 2);
+            const x = (Math.random() * (r * 2 + 1)) - r;
+            const b = c - Math.pow(x, 2);
+            const max = Math.sqrt(b);
+            const y = (Math.random() * (max * 2)) - max;
+            return [x + ox, y + oy];
+        }
+
+        for (const v of this.state.scenario.candidates) {
+            const group = this.state.answer[v];
+
+            if (group != null) {
+                const cx = config.circles[group - 1].x;
+                const cy = config.circles[group - 1].y;
+                const r = this.state.scenario.circles[group - 1].isLarge ?
+                    config.radius : config.radius * config.scaleSmallCircle;
+                const [x, y] = randomPosition(cx, cy, r);
+
+                const bitmap = this.state.stage.getChildByName(v);
+                bitmap.x = x;
+                bitmap.y = y;
+            }
+        }
+    }
+
+    _checkAnswer() {
+        const player = this.state.scenario.player;
+        const playerAnswer = this.state.answer[player];
+        let sel = this.state.selectedCircle;
+        if (sel != null) {
+            sel = config.circles.map((element) => element.id == sel);
+            sel = sel.findIndex((element) => element);
+        }
+
+        console.log('check', player, playerAnswer, sel);
+        if (playerAnswer == sel) {
+            console.log('correct');
+        } else {
+            console.log('wrong');
+            const blowAway = (v) => {
+                const bitmap = this.state.stage.getChildByName(v);
+                Tween.get(bitmap)
+                    .to({
+                        y: 0
+                    }, 400)
+                    .wait(1000)
+                    .to({
+                        y: 600
+                    }, 400);
+            };
+            let victim = pick(this.state.answer,
+                (val, key) => val == playerAnswer);
+            victim = keys(victim);
+            if (sel == null) {
+                victim = victim.filter((element) => element != player);
+            }
+            console.log('victim', victim);
+
+            victim.map((element) => blowAway(element));
         }
     }
 
@@ -118,8 +203,9 @@ export default class Canvas extends Component {
         this.setState({
             playerX: event.stageX,
             playerY: event.stageY,
+            selectedCircle: event.currentTarget.name,
         });
-        const player = this.state.stage.getChildByName(this.scenario.player);
+        const player = this.state.stage.getChildByName(this.state.scenario.player);
         player.x = event.stageX;
         player.y = event.stageY;
         player.visible = true;
@@ -128,11 +214,13 @@ export default class Canvas extends Component {
 
     play() {
         this._initMembers();
+        this._initCircles();
         for (const p of config.circles) {
             for (const c of [p.outer, p.inner]) {
                 const bitmap = this.state.stage.getChildByName(c.id);
                 Tween.get(bitmap, {
                         loop: true,
+                        override: true,
                     })
                     .to({
                             rotation: c.rotation
@@ -144,35 +232,18 @@ export default class Canvas extends Component {
             }
         }
 
-        for (const p of this.scenario.positions) {
+        for (const p of this.state.scenario.positions) {
             const bitmap = this.state.stage.getChildByName(p.id);
             bitmap.x = p.x;
             bitmap.y = p.y;
             bitmap.visible = true;
         }
 
-        const randomPosition = (ox, oy, r) => {
-            const c = Math.pow(r, 2);
-            const x = (Math.random() * (r * 2 + 1)) - r;
-            const b = c - Math.pow(x, 2);
-            const max = Math.sqrt(b);
-            const y = (Math.random() * (max * 2)) - max;
-            return [x + ox, y + oy];
-        }
-
-        for (const v of this.scenario.candidates) {
-            const group = this.answer[v];
-            if (group != 0) {
-                const cx = config.circles[group - 1].x;
-                const cy = config.circles[group - 1].y;
-                const r = config.radius;
-                const [x, y] = randomPosition(cx, cy, r);
-
-                const bitmap = this.state.stage.getChildByName(v);
-                bitmap.x = x;
-                bitmap.y = y;
-            }
-        }
+        setTimeout(() => {
+            this._allocateMembers();
+            this._checkAnswer();
+        },
+        config.durationExplode);
     }
     
     render() {

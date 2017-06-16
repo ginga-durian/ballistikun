@@ -44,7 +44,7 @@ class Main extends Component {
     }
 
     componentWillMount() {
-        this._next();
+        this._updateScenario();
     }
 
     componentDidMount() {
@@ -72,20 +72,21 @@ class Main extends Component {
         this.setState({
             stop: false,
         });
-        this._next();
+        this._updateScenario();
         console.log("start");
     }
 
-    handleMarkerChange(markerId) {
-        console.log("marker changed", markerId);
-        this.scenarioGen.setPlayer(markerId);
+    handleMarkerChange(marker) {
+        console.log("marker changed", marker);
+        this.scenarioGen.setPlayer(marker.id);
+        this._updateScenario();
     }
 
-    _next() {
+    _updateScenario() {
         const newScenario = this.scenarioGen.generate();
         this.solver.setScenario(newScenario);
         const answer = this.solver.getAnswer();
-        console.log(answer);
+        console.log("answer", answer);
         this.setState({
             scenario: newScenario,
             answer: answer,
@@ -105,7 +106,7 @@ class Main extends Component {
                     <Canvas
                         width={600}
                         height={600}
-                        isStop={this.state.stop}
+                        play={!this.state.stop}
                         scenario={this.state.scenario}
                         answer={this.state.answer}
                          />

@@ -1,5 +1,6 @@
 import {
-    first
+    first,
+    mapObject,
 } from 'underscore';
 import config from 'config.js';
 
@@ -25,6 +26,7 @@ export default class Solver {
         };
         const firstTarget = memberInfo(this.scenario.firstTarget);
         const secondTarget = memberInfo(this.scenario.secondTarget);
+        console.log("abc", this.scenario.player);
         const player = memberInfo(this.scenario.player);
         const candidates = this.scenario.candidates.map(
             (element) => memberInfo(element)
@@ -37,7 +39,7 @@ export default class Solver {
         console.log('player', player.id);
         console.log('swap?', shouldSwap);
 
-        const answer = (() => {
+        let answer = (() => {
             const higherTarget = shouldSwap ? secondTarget : firstTarget;
             const lowerTarget = shouldSwap ? firstTarget : secondTarget;
             const isHigherCircleLarge = shouldSwap ?
@@ -51,42 +53,42 @@ export default class Solver {
                     console.log('A-A');
                     return ({
                         'a1': 1,
-                        'a2': isHigherCircleLarge || (higherTarget.id == 'a1') ? 1 : 0,
+                        'a2': isHigherCircleLarge || (higherTarget.id == 'a1') ? 1 : null,
                         'a3': isHigherCircleLarge ||
                             ((higherTarget.id == 'a1') &&
-                                (lowerTarget.id == 'a2')) ? 1 : 0,
-                        'a4': isHigherCircleLarge ? 1 : 0,
+                                (lowerTarget.id == 'a2')) ? 1 : null,
+                        'a4': isHigherCircleLarge ? 1 : null,
                         'b1': 2,
-                        'b2': isLowerCircleLarge ? 2 : 0,
-                        'b3': 0,
-                        'b4': 0,
+                        'b2': isLowerCircleLarge ? 2 : null,
+                        'b3': null,
+                        'b4': null,
                     });
                 } else if ((higherTarget.group == 2) &&
                     (lowerTarget.group == 2)) {
                     console.log('B-B');
                     return ({
                         'a1': 1,
-                        'a2': isHigherCircleLarge ? 1 : 0,
+                        'a2': isHigherCircleLarge ? 1 : null,
                         'a3': 2,
-                        'a4': isLowerCircleLarge ? 2 : 0,
-                        'b1': 0,
-                        'b2': 0,
-                        'b3': 0,
-                        'b4': 0,
+                        'a4': isLowerCircleLarge ? 2 : null,
+                        'b1': null,
+                        'b2': null,
+                        'b3': null,
+                        'b4': null,
                     });
                 } else {
                     console.log('A-B');
                     return ({
                         'a1': 1,
-                        'a2': (higherTarget.id == 'a1') || isHigherCircleLarge ? 1 : 0,
+                        'a2': (higherTarget.id == 'a1') || isHigherCircleLarge ? 1 : null,
                         'a3': (higherTarget.id == 'a1' || higherTarget.id == 'a2') &&
-                            isHigherCircleLarge ? 1 : 0,
-                        'a4': 0,
+                            isHigherCircleLarge ? 1 : null,
+                        'a4': null,
                         'b1': 2,
-                        'b2': (lowerTarget.id == 'b2') || isLowerCircleLarge ? 2 : 0,
+                        'b2': (lowerTarget.id == 'b2') || isLowerCircleLarge ? 2 : null,
                         'b3': (lowerTarget.id == 'b1' || lowerTarget.id == 'b2') &&
-                            isLowerCircleLarge ? 2 : 0,
-                        'b4': 0,
+                            isLowerCircleLarge ? 2 : null,
+                        'b4': null,
                     });
                 }
             })();
@@ -94,6 +96,19 @@ export default class Solver {
             temp[lowerTarget.id] = 2;
             return temp;
         })();
+
+        if (shouldSwap) {
+            answer = mapObject(answer, (val) => {
+                if (val == 1) {
+                    return 2;
+                } else if (val == 2) {
+                    return 1;
+                } else {
+                    return null;
+                }
+            });
+        }
+
         return answer;
     }
 }

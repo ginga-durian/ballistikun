@@ -23,28 +23,10 @@ export default class ScenarioGenerator {
         this.playerId = player;
     }
 
-    _getRandomPosition(ox, oy, r) {
-        const c = Math.pow(r, 2);
-        const x = (Math.random() * (r * 2 + 1)) - r;
-        const b = c - Math.pow(x, 2);
-        const max = Math.sqrt(b);
-        const y = (Math.random() * (max * 2)) - max;
-        return [x, y];
-    }
-
     generate() {
         let candidates = without(this.members, this.playerId);
         const [first, second] = sample(candidates, 2);
         candidates = without(candidates, first, second);
-
-        const positions = candidates.map((element) => {
-            const [x, y] = this._getRandomPosition(150, 150, this.radius);
-            return ({
-                id: element,
-                x: x,
-                y: y,
-            });
-        });
 
         const [isFirstCircleLarge, isSecondCircleLarge] =
             sample([
