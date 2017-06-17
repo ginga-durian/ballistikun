@@ -1,6 +1,12 @@
 # 概要
 零式侵攻3層のバリスティックミサイルでもうこれ以上吹き飛びたくない光の戦士たちに贈る練習用アプリ。  
-http://ginga-durian.github.io/ballistikun/
+http://synnomy.github.io/ballistikun/
+
+バリスティックミサイルの解説  
+https://www.youtube.com/watch?v=IeUiwRI6rqM&t=406
+
+零式でのバリスティックミサイル  
+https://www.youtube.com/watch?v=91usvrEoB9E&t=176
 
 # ルール
 PTメンバー8人それぞれに以下のターゲットマーカーを割り振る。  
