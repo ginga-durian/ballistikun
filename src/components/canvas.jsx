@@ -184,7 +184,7 @@ export default class Canvas extends Component {
                     }, 400)
                     .wait(1000)
                     .to({
-                        y: 600
+                        y: 700
                     }, 400);
             };
             let victim = pick(this.state.answer,
